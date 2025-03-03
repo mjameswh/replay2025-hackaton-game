@@ -11,9 +11,14 @@ async def main():
 
     # Execute a workflow
     id = "hello-workflow-"+str(random.randint(1, 100000000))
+    id = "hello-workflow-64131818"
     
     result = await client.start_workflow(
-        StoryWorkflow.run, id=id, task_queue="default"
+        StoryWorkflow.run, 
+        id=id, 
+        task_queue="default",
+        start_signal="add_player",
+        start_signal_args=["Player1"],
     )
 
     print(f"Result: {result}")
