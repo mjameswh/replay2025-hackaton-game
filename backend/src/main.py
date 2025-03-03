@@ -3,24 +3,31 @@
 import asyncio
 
 from battle.workflows import BattleWorkflow
+from player.workflows import PlayerWorkflow
+from npc.workflows import NpcWorkflow
 from temporalio.client import Client
 from temporalio.worker import Worker
 from websockets.asyncio.server import serve
 
 active_connections = {}
 
+client = Client.connect("localhost:7233", namespace="default")
+handle = None
 
 async def receive_message(websocket):
+    global client, handle
     async for message in websocket:
-        await websocket.send(message)
+        if handle is None:
+            handle = await client.start_workflow(PlayerWorkflow.run, "my name", id="my-workflow-id", task_queue="my-task-queue")
+        await handle.signal(PlayerWorkflow.event_from_player, message)
 
 
 async def run_temporal_worker():
-    client = await Client.connect("localhost:7233", namespace="default")
+    global client
     worker = Worker(
         client,
         task_queue="hello-task-queue",
-        workflows=[BattleWorkflow],
+        workflows=[BattleWorkflow, NpcWorkflow, PlayerWorkflow],
         activities=[],
     )
 
