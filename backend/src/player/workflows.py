@@ -1,30 +1,27 @@
-from datetime import timedelta
+import typing
 
+import models
 from temporalio import workflow
-
-# Import activity for writing to player's socket
-with workflow.unsafe.imports_passed_through():
-    from activities import write_to_socket
 
 
 @workflow.defn
 class PlayerWorkflow:
-    @workflow.signal
-    async def take_turn(self, TakeTurnParams) -> None:
-        """
-        Received from the Battle workflow.
-        For human players, write a message to the player's socket and await their response on the "player_response" signal.
-        For NPCs, roll a d6 dice to determine the outcome.
-        """
+    @workflow.run
+    async def run(self, name: str) -> str:
         pass
 
     @workflow.signal
-    async def player_response(message: str) -> None:
-        """
-        Handles the response from the player.
+    async def update_history(self, history: typing.List[models.Action]):
+        self.history = history
 
-        For now, they can just attack the target
-        """
-        await write_to_socket(
-            username=username, message=message, timeout=timedelta(seconds=5)
-        )
+        # TODO: send to the player with websockets new events
+
+    @workflow.signal
+    async def your_move_event(self):
+        # TODO: send an event with websocket
+        pass
+
+    @workflow.signal
+    async def event_from_player(self, event: str):
+        # BattleWorkflow.send_signal()
+        pass
