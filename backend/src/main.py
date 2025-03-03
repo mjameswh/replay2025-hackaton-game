@@ -7,6 +7,8 @@ from temporalio.client import Client
 from temporalio.worker import Worker
 from websockets.asyncio.server import serve
 
+active_connections = {}
+
 
 async def receive_message(websocket):
     async for message in websocket:
