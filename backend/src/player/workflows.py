@@ -1,3 +1,5 @@
+from battle.workflows import BattleWorkflow
+
 from datetime import timedelta
 from temporalio import workflow
 
@@ -20,3 +22,10 @@ class PlayerWorkflow:
     @workflow.signal
     async def your_move_event(self):
         # TODO: send an event with websocket
+        pass
+
+
+    @workflow.signal
+    async def event_from_player(self, event: str):
+        # BattleWorkflow.send_signal()
+        pass
