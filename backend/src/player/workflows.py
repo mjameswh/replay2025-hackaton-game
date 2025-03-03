@@ -1,14 +1,22 @@
 from datetime import timedelta
 from temporalio import workflow
 
-# Import activity, passing it through the sandbox without reloading the module
-with workflow.unsafe.imports_passed_through():
-    from activities import say_hello
+import models
+import typing
 
 @workflow.defn
-class SayHello:
+class PlayerWorkflow:
     @workflow.run
     async def run(self, name: str) -> str:
-        return await workflow.execute_activity(
-            say_hello, name, start_to_close_timeout=timedelta(seconds=5)
-        )
+        pass
+    
+    @workflow.signal
+    async def update_history(self, history: typing.List[models.Action]):
+        self.history = history
+
+        # TODO: send to the player with websockets new events
+
+    
+    @workflow.signal
+    async def your_move_event(self):
+        # TODO: send an event with websocket
