@@ -12,7 +12,6 @@ class BattleState:
 
 @workflow.defn
 class BattleWorkflow:
-    @workflow.init
     @workflow.run
     async def run(self, state: BattleState) -> str:
         self.state = state
@@ -20,3 +19,7 @@ class BattleWorkflow:
             if self.should_continue_as_new():
                 await workflow.wait_condition(lambda: workflow.all_handlers_finished())
                 workflow.continue_as_new(state)
+
+    @workflow.signal
+    async def start_battle(self, players: list[UserState]) -> None:
+        self.state.players = players
