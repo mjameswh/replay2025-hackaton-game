@@ -1,4 +1,4 @@
-from models import UserState
+from models import BattleState, UserState
 from temporalio import workflow
 
 
@@ -16,3 +16,11 @@ class BattleWorkflow:
     async def start_battle(self, players: list[UserState]) -> None:
         self.state.players = players
         self.state.current_player_index = 0
+
+        current_player = self.state.players[self.state.current_player_index]
+        current_player_username = current_player.username
+
+        handle = workflow.get_external_workflow_handle_for(
+            BattleWorkflow.run, current_player_username
+        )
+        await handle.signal(BattleWorkflow.take_turn, "signal argument")

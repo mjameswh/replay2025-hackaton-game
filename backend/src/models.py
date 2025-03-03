@@ -25,3 +25,9 @@ class AIMove:
 class BattleState:
     players: list[UserState]  # ordered in turn order
     current_player_index: int
+
+
+@dataclass
+class BattleEvent:
+    last_action: Action
+    current_state: BattleState
