@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from datetime import timedelta
 
-from models import BattleState, UserState
+from models import Action, BattleState, UserState
+from player.workflows import PlayerWorkflow
 from temporalio import activity, workflow
 
 
@@ -30,7 +31,7 @@ class BattleWorkflow:
         current_player_username = current_player.username
 
         handle = workflow.get_external_workflow_handle_for(
-            ParticipantWorkflow.run, current_player_username
+            PlayerWorkflow.run, current_player_username
         )
 
         await handle.signal(BattleWorkflow.take_your_turn)
