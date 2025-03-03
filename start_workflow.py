@@ -1,7 +1,8 @@
 import asyncio
 
-from run_worker import SayHello
+from game.workflows import StoryWorkflow
 from temporalio.client import Client
+import random
 
 
 async def main():
@@ -9,8 +10,10 @@ async def main():
     client = await Client.connect("localhost:7233")
 
     # Execute a workflow
-    result = await client.execute_workflow(
-        SayHello.run, "Temporal", id="hello-workflow", task_queue="hello-task-queue"
+    id = "hello-workflow-"+str(random.randint(1, 100000000))
+    
+    result = await client.start_workflow(
+        StoryWorkflow.run, id=id, task_queue="default"
     )
 
     print(f"Result: {result}")
