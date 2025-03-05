@@ -1,6 +1,8 @@
 from temporalio import workflow
 
-from activities import ai_make_move
+# Import activity, passing it through the sandbox without reloading the module
+with workflow.unsafe.imports_passed_through():
+    from npc.activities import ai_make_move
 
 
 @workflow.defn
@@ -23,4 +25,3 @@ class NpcWorkflow:
         self.should_proceed = True
         self.states = states
 
-    

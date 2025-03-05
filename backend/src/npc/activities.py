@@ -1,9 +1,9 @@
 import typing
 
-from llm import ollama_h
+from npc.llm import ollama_h
 from temporalio import activity
 
-import backend.src.models as models
+import models as models
 
 
 @activity.defn
